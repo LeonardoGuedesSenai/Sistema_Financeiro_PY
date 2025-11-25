@@ -1,0 +1,168 @@
+body {
+    background: linear-gradient(135deg, #FF8A4C, #FF5964);
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.my-navbar {
+    background-color: white !important;
+    color: black
+}
+
+.my-navbar a,
+.my-navbar .navbar-brand,
+.my-navbar .nav-link{
+    color:white
+}
+
+
+main {
+    width: 60%;
+    max-width: 900px;
+    margin: 40px auto;
+    background-color: #FF8A4C;
+    border: solid rgb(175, 36, 66);
+    border-radius: 25px;
+    padding: 30px;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 25px rgba(0,0,0,0.15);
+}
+
+header h1 {
+    text-align: center;
+    font-size: 32px;
+    padding: 10px;
+    border-radius: 20px;
+    text-decoration: underline;
+    letter-spacing: 2px;
+    
+}
+
+
+
+
+/* ÁREA ONDE AS LINHAS VÃO APARECER */
+.table-header {
+    display: flex;
+    justify-content: space-around;
+    gap: 15px;
+    padding: 14px;
+    border-radius: 20px;
+    margin-bottom: 15px;
+    background: #157A45;
+    font-weight: bold;
+    color: #1BFF80;
+}
+
+
+section#lista-gastos-area {
+    background: rgba(255, 255, 255, 0.842);
+padding: 20px;
+border-radius: 10px;
+margin-bottom: 20px;
+color: black;
+font-family: Arial;
+display: flex;
+flex-direction: column;
+align-items: center;
+}
+
+.linha-gasto {
+width: 90%;
+display:flex;
+justify-content: space-around;
+padding: 14px;
+gap: 15px;
+margin-bottom: 10px;
+background: rgba(117, 241, 127, 0.76);
+border-radius: 15px;
+font-family: Arial;
+color: #04351c;
+font-weight: bold;
+}
+
+section#total {
+margin-top: 20px;
+padding: 15px;
+background: #157A45;  /* VERDE */
+border-radius: 20px;
+font-size: 22px;
+font-weight: bold;
+text-align: center;
+color: #6FFFBA;
+}
+
+/* ÁREA DE INPUT DO USUÁRIO */
+
+
+footer {
+    background-color: #FF8A4C;
+    border-radius: 20px;
+    box-shadow: 0px 4px 20px rgba(0,0,0,0.15);
+    width: 30%;
+    margin-top: 40px;
+    padding-top: 20px;
+    border: solid rgb(175, 36, 66);
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-direction: column;
+    
+
+}
+
+footer form {
+    
+    margin-bottom: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    grid-template-columns: 1fr 150px 150px;
+    gap: 15px;
+    
+}
+
+input {
+    padding: 12px;
+    border-radius: 12px;
+    border: none;
+    width: 50%;
+    outline: none;
+}
+
+button {
+    background: rgba(255,255,255,0.15);
+    color: white;
+    padding: 15px 25px;
+    border-radius: 18px;
+    font-size: 18px;
+    margin: 10px;
+    cursor: pointer;
+    border: none;
+    transition: 0.2s;
+}
+
+button:hover {
+    background: rgba(255,255,255,0.28);
+    transform: scale(1.05);
+}
+
+.formulario {
+opacity: 0;
+height: 0;
+overflow: hidden;
+transition: all 0.3s ease;
+}
+
+.formulario.mostrar {
+    opacity: 1;
+    height: auto;
+    overflow: visible;
+}

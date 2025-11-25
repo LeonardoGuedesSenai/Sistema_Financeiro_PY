@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Gastos Mensais</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='statics.css') }}">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+</head>
+
+
+<body>
+    <nav class="navbar navbar-expand-lg my-navbar" style="width:100%;">
+
+        <div class="container-fluid">
+          <a class="navbar-brand" href="#">Controle Financeiro</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="#">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">Link</a>
+              </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  Dropdown
+                </a>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="#">Action</a></li>
+                  <li><a class="dropdown-item" href="#">Another action</a></li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li><a class="dropdown-item" href="#">Something else here</a></li>
+                </ul>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link disabled" aria-disabled="true">Disabled</a>
+              </li>
+            </ul>
+            <form class="d-flex" role="search">
+              <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"/>
+              <button class="btn btn-outline-success" type="submit">Search</button>
+            </form>
+          </div>
+        </div>
+      </nav>
+
+<main>
+
+    <header>
+        <h1>GASTOS MENSAIS</h1>
+    </header>
+
+    <!-- CABEÇALHO VERDE -->
+    <div class="table-header">
+        <span>POSIÇÃO</span>
+        <span>PRODUTO</span>
+        <span>PREÇO</span>
+        <span>DATA</span>
+    </div>
+
+    <!-- ÁREA ONDE FICAM AS LINHAS ADICIONADAS -->
+    <section id="lista-gastos-area">
+    <table class="tabela-gastos">
+
+       
+        {% for item in gastos_gerais %}
+            <div class="linha-gasto">
+                <span>{{ loop.index0 }}</span>
+                <span>{{ item["Produto"] }}</span>
+                <span>R$ {{ item["Valor"] }}</span>
+                <span>{{ item["Data"] }}</span>
+            </div>
+        {% endfor %}
+        
+    </table>
+</section>
+
+    <!-- TOTAL VERDE -->
+    <section id="total">
+        TOTAL: R$ {{total}}
+    </section>
+
+    
+
+</main>
+<!-- CAMPOS DE DIGITAÇÃO -->
+<footer>
+    <div class="adicionar_remover">
+        <button onclick="mostrarFormulario('add')">➕ Adicionar Linha</button>
+        <button onclick="mostrarFormulario('remove')">➖ Remover Linha</button>
+    </div>
+
+    <form id="formAdd" class="formulario" action="/adicionar" method="POST">
+        <input type="text" name="Produto" placeholder="Nome do produto">
+        <input type="number" name="Preco" placeholder="Preço">
+        <input type="date" name="data">
+        <button>confirmar</button>
+    </form>
+
+    <form id="formRemove" class="formulario" action="/remover" method="POST">
+        <p>posição do produto que deseja remover</p>
+        <input type="text" name="Produto_remover" placeholder="Posição do produto EX: 0,1,2,3">
+        <button>confirmar</button>
+    </form>
+
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+<script>
+    function mostrarFormulario(tipo) {
+        const add = document.getElementById("formAdd");
+        const remove = document.getElementById("formRemove");
+
+        add.classList.remove("mostrar");
+        remove.classList.remove("mostrar");
+
+        if (tipo === "add") {
+            add.classList.add("mostrar");
+        } else {
+            remove.classList.add("mostrar");
+        }
+    }
+</script>
+</body>
+</html>
