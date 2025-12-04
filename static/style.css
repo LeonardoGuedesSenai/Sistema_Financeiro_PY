@@ -342,7 +342,7 @@ tbody tr:hover {
 /* botao de deletar */
 .delete-btn {
   background: #171717;
-  border: 1px color white;
+  border: solid 1px #2d2d2d;
   color: white;
   padding: 5px 10px;
   border-radius: 5px;
