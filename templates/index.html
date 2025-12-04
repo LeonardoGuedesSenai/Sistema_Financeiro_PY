@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle de Gastos</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-content">
+                <div>
+                    <h1>Controle de Gastos</h1>
+                    <p class="subtitle">Gerencie suas finanças pessoais</p>
+                </div>
+                <div class="header-actions">
+                    <button id="calendarBtn" class="btn-outline">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                    </button>
+                    <button id="reportBtn" class="btn-outline">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                            <polyline points="10 9 9 9 8 9"></polyline>
+                        </svg>
+                        Relatório
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cards de resumo -->
+        <div class="cards-grid">
+            <div class="card card-green">
+                <div class="card-header">
+                    <span>Entradas</span>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                        <polyline points="17 6 23 6 23 12"></polyline>
+                    </svg>
+                </div>
+                <div class="card-value" id="totalEntrada">R$ 0,00</div>
+            </div>
+
+            <div class="card card-red">
+                <div class="card-header">
+                    <span>Saídas</span>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="23 18 13.5 8.5 8.5 13.5 1 6"></polyline>
+                        <polyline points="17 18 23 18 23 12"></polyline>
+                    </svg>
+                </div>
+                <div class="card-value" id="totalSaida">R$ 0,00</div>
+            </div>
+
+            <div class="card card-purple">
+                <div class="card-header">
+                    <span>Saldo Atual</span>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4"></path>
+                        <path d="M4 6v12c0 1.1.9 2 2 2h14v-4"></path>
+                        <path d="M18 12a2 2 0 0 0-2 2c0 1.1.9 2 2 2h4v-4h-4z"></path>
+                    </svg>
+                </div>
+                <div class="card-value" id="saldoAtual">R$ 0,00</div>
+            </div>
+        </div>
+
+        <!-- Formulário e Gráfico -->
+        <div class="content-grid">
+            <!-- Formulário -->
+            <div class="card">
+                <div class="card-header">
+                    <h2>Adicionar Transação</h2>
+                    <p class="card-description">Registre suas receitas e despesas</p>
+                </div>
+                <div class="card-body">
+                    <form id="transactionForm">
+                        <div class="form-group">
+                            <label for="description">Descrição</label>
+                            <input type="text" id="description" placeholder="Ex: Salário, Aluguel, Mercado" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="amount">Valor (R$)</label>
+                            <input type="number" id="amount" step="0.01" placeholder="0,00" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="type">Tipo</label>
+                            <select id="type" required>
+                                <option value="entrada">Entrada</option>
+                                <option value="saida">Saída</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="date">Data</label>
+                            <input type="date" id="date" required>
+                        </div>
+
+                        <button type="submit" class="btn-primary">Adicionar Transação</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Gráfico ----->
+            <div class="card">
+                <div class="card-header">
+                    <h2>Visão Geral</h2>
+                    <p class="card-description">Distribuição financeira</p>
+                </div>
+                <div class="card-body">
+                    <canvas id="financeChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabela de transações -->
+        <div class="card" style="margin-bottom: 2rem;">
+            <div class="card-header">
+                <h2>Histórico de Transações</h2>
+                <p class="card-description">Últimas movimentações financeiras</p>
+            </div>
+            <div class="card-body">
+                <table id="transactionsTable">
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Descrição</th>
+                            <th>Tipo</th>
+                            <th class="text-right">Valor</th>
+                            <th style="text-align: center;">Remover</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transactionsBody">
+                        <tr>
+                            <td colspan="4" class="text-center">Nenhuma transação registrada</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- <div id="corpo_invisivel_botão" style="margin-bottom: 2rem;">
+                <button> REMOVER LINHA  </button>
+        </div>
+        <div id="corpo_invisivel_formulario">
+            <div id="corpo_formulario">
+                <div class="card-header"><h2>digite a descrição do gasto</h2></div>
+
+                <div class="card-body">  
+                    <form action="remover_linha_gastos" method="POST">
+                    <input type="text" name="" id="" placeholder="digite a descrição do gasto:">
+                    </form>
+                </div>  
+            </div>
+        </div> -->
+        
+    
+    </div>
+
+    <!-- Modal de Calendário -->
+    <div id="calendarModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Calendário de Transações</h2>
+                <button class="modal-close" onclick="closeCalendar()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="calendarContainer"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Relatório -->
+    <div id="reportModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Relatório Financeiro</h2>
+                <button class="modal-close" onclick="closeReport()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="cards-grid">
+                    <div class="card card-green">
+                        <div class="card-header-small">Total de Entradas</div>
+                        <div class="card-value" id="reportEntrada">R$ 0,00</div>
+                    </div>
+                    <div class="card card-red">
+                        <div class="card-header-small">Total de Saídas</div>
+                        <div class="card-value" id="reportSaida">R$ 0,00</div>
+                    </div>
+                    <div class="card card-purple">
+                        <div class="card-header-small">Saldo Mensal</div>
+                        <div class="card-value" id="reportSaldo">R$ 0,00</div>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-top: 1.5rem;">
+                    <div class="card-header">
+                        <h3>Análise de Projeção</h3>
+                    </div>
+                    <div class="card-body">
+                        <div id="analysisContent"></div>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-top: 1.5rem;">
+                    <div class="card-header">
+                        <h3>Projeção de Economia (12 meses)</h3>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="projectionChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+
+</html>
