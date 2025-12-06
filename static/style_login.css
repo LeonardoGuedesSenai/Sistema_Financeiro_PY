@@ -1,94 +1,264 @@
- 
-  :root {
-    --bg-primary: #000005;
-    --bg-secondary: #171717;
-    --bg-card: #1c1c1c;
-    --text-primary: #fafafa;
-    --text-secondary: #a3a3a3;
-    --border: #2d2d2d;
-    --green: #16a34a;
-    --red: #ef4444;
-    --purple: #a855f7;
-  }
-  
-  /* Fundo geral e centralização do formulário */
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-    background: var(--bg-primary);
-    color: var(--text-primary);
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-  }
-  
-  main {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 1.5rem;
-  }
-  
-  /* Navbar escura no mesmo estilo */
-  .navbar {
-    background: #020617 !important;
-    border-bottom: 1px solid var(--border);
-  }
-  
-  .navbar-brand,
-  .navbar-nav .nav-link {
-    color: var(--text-primary) !important;
-    font-weight: 500;
-  }
-  
-  .navbar-nav .nav-link.active,
-  .navbar-nav .nav-link:hover {
-    color: var(--green) !important;
-  }
-  
-  /* Card do formulário */
-  
-  main form {
-    width: 100%;
-    max-width: 420px;
-    background: var(--bg-card);
-    border-radius: 0.75rem;
-    border: 1px solid var(--border);
-    padding: 2rem 1.75rem;
-  }
-  
-  /* Labels e campos */
-  
-  .form-label {
-    color: var(--text-secondary);
-    font-size: 0.9rem;
-  }
-  
-  .form-control {
-    background: var(--bg-secondary);
-    border: 1px solid var(--border);
-    color: var(--text-primary);
-  }
-  
-  .form-control
-  
-  main {
-    min-height: calc(80vh - 36px); /* 56px ~ altura da navbar */
-    display: flex;
-    align-items: center;   /* centraliza verticalmente */
-    justify-content: center; /* centraliza horizontalmente */
-  }
-  
-  main form {
-    width: 100%;
-    max-width: 480px;      /* define largura máxima do formulário */
-  }
-  /* Cor padrão dos placeholders */
-form input::placeholder,
-form .form-control::placeholder {
-  color: #d4d4d8; /* mais claro */
-  opacity: 1;     /* garante que o navegador não escureça */
+:root {
+  --bg-primary: #020617;
+  --bg-secondary: #0b1120;
+  --bg-card: #111827;
+  --text-primary: #f9fafb;
+  --text-secondary: #9ca3af;
+  --border: #1f2933;
+  --accent: #22c55e;
+  --accent-soft: rgba(34, 197, 94, 0.15);
+  --danger: #ef4444;
 }
 
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-  
+body {
+  min-height: 100vh;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  background: radial-gradient(circle at top, #1e293b, var(--bg-primary));
+  color: var(--text-primary);
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+}
+
+/* Cabeçalho com título */
+header {
+  width: 100%;
+  padding: 2rem 1.5rem;
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+  background: linear-gradient(180deg, #111827 0%, #0b1120 100%);
+}
+
+header h1 {
+  font-size: 2.25rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.5px;
+  margin: 0;
+}
+
+header p {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-top: 0.5rem;
+}
+
+/* Container principal (main) */
+main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1.5rem;
+}
+
+/* Container do formulário */
+#Corpo_Do_Formulario {
+  width: 100%;
+  max-width: 900px;
+  background: var(--bg-card);
+  border-radius: 0.75rem;
+  border: 1px solid var(--border);
+  display: grid;
+  grid-template-columns: 1.05fr 1.1fr;
+  gap: 2.25rem;
+  padding: 2.5rem 2.25rem;
+  position: relative;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.65);
+}
+
+/* Formulários */
+#Entrar_Na_Conta,
+#Cadastrar_Conta {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+#Corpo_Do_Formulario h2 {
+  font-size: 1.45rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+#Corpo_Do_Formulario p {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+/* Labels */
+label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+/* Inputs */
+input[type="email"],
+input[type="password"] {
+  padding: 0.75rem 0.85rem;
+  border-radius: 0.55rem;
+  border: 1px solid var(--border);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease,
+    background-color 0.15s ease;
+}
+
+input::placeholder {
+  color: #d4d4d8;
+  opacity: 1;
+}
+
+input:focus {
+  outline: none;
+  border-color: var(--accent);
+  background-color: #020617;
+  box-shadow: 0 0 0 1px var(--accent-soft);
+}
+
+/* Botões */
+button {
+  border: none;
+  border-radius: 0.35rem;
+  padding: 0.75rem 1rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.18s ease, transform 0.08s ease,
+    box-shadow 0.18s ease, color 0.18s ease;
+}
+
+/* Botão principal (confirmar) */
+#Entrar_Na_Conta button,
+#Cadastrar_Conta button {
+  background: var(--accent);
+  color: #022c22;
+  width: 100%;
+  margin-top: 0.3rem;
+  align-self: center;
+}
+
+#Entrar_Na_Conta button:hover,
+#Cadastrar_Conta button:hover {
+  background: #16a34a;
+  box-shadow: 0 8px 25px rgba(22, 163, 74, 0.35);
+  transform: translateY(-1px);
+}
+
+#Entrar_Na_Conta button:active,
+#Cadastrar_Conta button:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+/* Botão "Ainda não tenho um Email" */
+#se_cadastrar {
+  align-self: flex-start;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  padding-inline: 1.25rem;
+  margin-top: 0.5rem;
+  font-weight: 500;
+  border-radius: 0.35rem;
+}
+
+#se_cadastrar:hover {
+  background: rgba(15, 23, 42, 0.9);
+  color: var(--text-primary);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45);
+}
+
+/* Linha divisória */
+.linha_branca {
+  height: 1px;
+  width: 100%;
+  background: var(--border);
+  margin: 0.5rem 0 0.75rem 0;
+}
+
+/* Exibição/ocultação do cadastro */
+#Cadastrar_Conta {
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  transform: translateY(8px);
+  transition: opacity 0.25s ease, max-height 0.25s ease,
+    transform 0.25s ease;
+}
+
+#Cadastrar_Conta.mostrar {
+  opacity: 1;
+  max-height: 800px;
+  transform: translateY(0);
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+  main {
+    padding: 1.5rem;
+  }
+
+  header {
+    padding: 1.5rem 1rem;
+  }
+
+  header h1 {
+    font-size: 1.75rem;
+  }
+
+  #Corpo_Do_Formulario {
+    grid-template-columns: 1fr;
+    padding: 2rem 1.5rem;
+    gap: 2rem;
+  }
+
+  #se_cadastrar {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    padding: 0;
+  }
+
+  header {
+    padding: 1.25rem 1rem;
+  }
+
+  header h1 {
+    font-size: 1.5rem;
+  }
+
+  #Corpo_Do_Formulario {
+    padding: 1.75rem 1.25rem;
+    gap: 1.5rem;
+  }
+
+  input[type="email"],
+  input[type="password"] {
+    font-size: 0.9rem;
+  }
+
+  button {
+    font-size: 0.9rem;
+  }
+}

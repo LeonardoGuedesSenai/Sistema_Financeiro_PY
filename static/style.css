@@ -1,36 +1,45 @@
 :root {
-  --bg-primary: #000005;
-  --bg-secondary: #171717;
-  --bg-card: #1c1c1c;
-  --text-primary: #fafafa;
-  --text-secondary: #a3a3a3;
-  --border: #2d2d2d;
-  --green: #16a34a;
+  --bg-primary: #020617;
+  --bg-secondary: #0b1120;
+  --bg-card: #111827;
+  --text-primary: #f9fafb;
+  --text-secondary: #9ca3af;
+  --border: #1f2933;
+  --accent: #22c55e;
+  --accent-soft: rgba(34, 197, 94, 0.15);
+  --green: #22c55e;
   --red: #ef4444;
   --purple: #a855f7;
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
   background: var(--bg-primary);
   color: var(--text-primary);
   line-height: 1.6;
-  padding: 1rem;
+  padding: 0;
+  min-height: 100vh;
 }
 
 .container {
   max-width: 1400px;
   margin: 0 auto;
+  padding: 0 1.5rem;
 }
 
+/* ============ HEADER ============ */
+
 .header {
-  margin-bottom: 2rem;
+  background: linear-gradient(180deg, #111827 0%, #0b1120 100%);
+  border-bottom: 1px solid var(--border);
+  padding: 1.5rem 0;
+  margin-bottom: 1rem;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-radius: 0.5rem;
 }
 
 .header-content {
@@ -38,64 +47,97 @@ body {
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 1rem;
+  gap: 1.0rem;
 }
 
 h1 {
-  font-size: 2rem;
+  font-size: 1.75rem;
   font-weight: 700;
-  margin-bottom: 0.25rem;
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0;
+  display: inline-block;
+  border-radius: 1rem;
+  padding: 0.5rem;
 }
+
+
 
 .subtitle {
   color: var(--text-secondary);
-  font-size: 0.95rem;
+  font-size: 0.9rem;
+  margin: 0.25rem 0 0 0;
 }
 
 .header-actions {
   display: flex;
-  gap: 0.5rem;
+  gap: 0.75rem;
+  align-items: center;
 }
 
 .btn-outline {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.5rem 1rem;
+  padding: 0.65rem 1rem;
   background: transparent;
   border: 1px solid var(--border);
-  border-radius: 0.5rem;
+  border-radius: 0.35rem;
   color: var(--text-primary);
   cursor: pointer;
-  font-size: 0.95rem;
-  transition: background 0.2s;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
 }
 
 .btn-outline:hover {
   background: var(--bg-secondary);
+  border-color: var(--accent);
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.15);
+}
+
+.btn-logout {
+  background: rgba(239, 68, 68, 0.1);
+  border-color: var(--red);
+  color: var(--red);
+}
+
+.btn-logout:hover {
+  background: rgba(239, 68, 68, 0.2);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15);
 }
 
 .btn-primary {
   width: 100%;
   padding: 0.75rem;
-  background: var(--text-primary);
-  color: var(--bg-primary);
+  background: var(--accent);
+  color: #022c22;
   border: none;
-  border-radius: 0.5rem;
-  font-size: 1rem;
+  border-radius: 0.35rem;
+  font-size: 0.95rem;
   font-weight: 600;
   cursor: pointer;
-  transition: opacity 0.2s;
+  transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
 }
 
 .btn-primary:hover {
-  opacity: 0.9;
+  background: #16a34a;
+  box-shadow: 0 8px 25px rgba(34, 197, 94, 0.3);
+  transform: translateY(-1px);
 }
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+/* ============ CARDS DE RESUMO ============ */
 
 .cards-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
   margin-bottom: 2rem;
 }
 
@@ -104,6 +146,13 @@ h1 {
   border: 1px solid var(--border);
   border-radius: 0.75rem;
   overflow: hidden;
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+}
+
+.card:hover {
+  border-color: var(--border);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  transform: translateY(-2px);
 }
 
 .card-header {
@@ -115,24 +164,26 @@ h1 {
 }
 
 .card-header h2 {
-  font-size: 1.25rem;
+  font-size: 1.1rem;
   font-weight: 600;
-  margin-bottom: 0.25rem;
+  margin: 0;
 }
 
 .card-description {
   color: var(--text-secondary);
-  font-size: 0.875rem;
+  font-size: 0.85rem;
+  margin-top: 0.3rem;
 }
 
 .card-header-small {
-  font-size: 0.875rem;
+  font-size: 0.85rem;
   font-weight: 500;
   padding: 1rem 1rem 0.5rem 1rem;
+  color: var(--text-secondary);
 }
 
 .card-value {
-  font-size: 1.875rem;
+  font-size: 2rem;
   font-weight: 700;
   padding: 0 1rem 1rem 1rem;
 }
@@ -153,22 +204,27 @@ h1 {
   padding: 1.5rem;
 }
 
+/* ============ GRID DE CONTEÚDO ============ */
+
 .content-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
   gap: 1.5rem;
   margin-bottom: 2rem;
 }
 
+/* ============ FORMULÁRIO ============ */
+
 .form-group {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.25rem;
 }
 
 .form-group label {
   display: block;
   margin-bottom: 0.5rem;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   font-weight: 500;
+  color: var(--text-secondary);
 }
 
 .form-group input,
@@ -177,16 +233,26 @@ h1 {
   padding: 0.75rem;
   background: var(--bg-secondary);
   border: 1px solid var(--border);
-  border-radius: 0.5rem;
+  border-radius: 0.35rem;
   color: var(--text-primary);
-  font-size: 1rem;
+  font-size: 0.95rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-group input::placeholder,
+.form-group select::placeholder {
+  color: #6b7280;
 }
 
 .form-group input:focus,
 .form-group select:focus {
   outline: none;
-  border-color: var(--text-secondary);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent-soft);
+  background: #020617;
 }
+
+/* ============ TABELA ============ */
 
 table {
   width: 100%;
@@ -205,7 +271,7 @@ td {
 
 th {
   font-weight: 600;
-  font-size: 0.875rem;
+  font-size: 0.85rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--text-secondary);
@@ -213,6 +279,7 @@ th {
 
 tbody tr {
   border-bottom: 1px solid var(--border);
+  transition: background 0.2s;
 }
 
 tbody tr:hover {
@@ -230,21 +297,23 @@ tbody tr:hover {
 
 .badge {
   display: inline-block;
-  padding: 0.25rem 0.75rem;
-  border-radius: 1rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 0.35rem;
   font-size: 0.75rem;
   font-weight: 600;
 }
 
 .badge-entrada {
-  background: rgba(22, 163, 74, 0.2);
+  background: rgba(34, 197, 94, 0.15);
   color: var(--green);
 }
 
 .badge-saida {
-  background: rgba(239, 68, 68, 0.2);
+  background: rgba(239, 68, 68, 0.15);
   color: var(--red);
 }
+
+/* ============ MODAL ============ */
 
 .modal {
   display: none;
@@ -253,10 +322,21 @@ tbody tr:hover {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 0, 0.85);
   z-index: 1000;
   overflow-y: auto;
   padding: 2rem;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 .modal.active {
@@ -267,11 +347,25 @@ tbody tr:hover {
 
 .modal-content {
   background: var(--bg-card);
-  border-radius: 1rem;
+  border-radius: 0.75rem;
+  border: 1px solid var(--border);
   max-width: 900px;
   width: 100%;
   max-height: 90vh;
   overflow-y: auto;
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 .modal-header {
@@ -282,6 +376,11 @@ tbody tr:hover {
   border-bottom: 1px solid var(--border);
 }
 
+.modal-header h2 {
+  margin: 0;
+  font-size: 1.3rem;
+}
+
 .modal-close {
   background: none;
   border: none;
@@ -289,11 +388,24 @@ tbody tr:hover {
   font-size: 1.5rem;
   cursor: pointer;
   line-height: 1;
+  transition: color 0.2s;
+}
+
+.modal-close:hover {
+  color: var(--red);
 }
 
 .modal-body {
   padding: 1.5rem;
 }
+
+/* ============ CHARTS ============ */
+
+canvas {
+  max-height: 400px;
+}
+
+/* ============ RESPONSIVE ============ */
 
 @media (max-width: 768px) {
   .content-grid {
@@ -301,11 +413,166 @@ tbody tr:hover {
   }
 
   h1 {
-    font-size: 1.5rem;
+    font-size: 1.4rem;
   }
 
   .header-content {
     flex-direction: column;
     align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .header-actions {
+    width: 100%;
+  }
+
+  .btn-outline {
+    flex: 1;
+    justify-content: center;
+  }
+
+  .cards-grid {
+    grid-template-columns: 1fr;
+  }
+
+  table {
+    font-size: 0.85rem;
+  }
+
+  th,
+  td {
+    padding: 0.75rem;
+  }
+
+  .modal {
+    padding: 1rem;
+  }
+
+  .modal-content {
+    max-height: 95vh;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0 1rem;
+  }
+
+  h1 {
+    font-size: 1.2rem;
+  }
+
+  .header {
+    padding: 1rem 0;
+    margin-bottom: 1.5rem;
+  }
+
+  .card-value {
+    font-size: 1.5rem;
+  }
+
+  .modal {
+    padding: 0.5rem;
+  }
+}
+
+/* ============ CHARTS ============ */
+
+canvas {
+  max-height: 400px;
+  min-height: 300px;
+}
+
+#financeChart {
+  max-height: 350px;
+}
+
+#projectionChart {
+  max-height: 400px;
+  min-height: 350px;
+  display: block;
+  width: 100% !important;
+}
+
+.modal-body canvas {
+  max-height: 500px;
+  min-height: 400px;
+}
+
+/* ============== ESTILO DA DATA PROFISSIONAL ============== */
+
+.date-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.date-input {
+  width: 100%;
+  padding: 0.75rem;
+  padding-right: 2.5rem;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  color: var(--text-primary);
+  font-size: 1rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+}
+
+.date-input::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0;
+  position: absolute;
+  right: 0.5rem;
+}
+
+.calendar-icon {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-secondary);
+  pointer-events: none;
+  transition: color 0.2s;
+}
+
+.date-input:focus {
+  outline: none;
+  border-color: var(--green);
+  box-shadow: 0 0 0 2px rgba(22, 163, 74, 0.1);
+}
+
+.date-input:focus~.calendar-icon {
+  color: var(--green);
+}
+
+/* Estilo do placeholder (quando vazio) */
+
+.date-input::placeholder {
+  color: var(--text-secondary);
+}
+
+/* Estilo do input quando preenchido */
+
+.date-input:valid {
+  background: var(--bg-secondary);
+  border-color: var(--green);
+}
+
+.date-input:valid~.calendar-icon {
+  color: var(--green);
+}
+
+/* Responsivo */
+
+@media (max-width: 480px) {
+  .date-input {
+    font-size: 0.95rem;
+    padding: 0.65rem 0.65rem 0.65rem 0.75rem;
+  }
+
+  .calendar-icon {
+    right: 0.6rem;
   }
 }

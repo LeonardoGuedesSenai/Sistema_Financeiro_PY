@@ -7,8 +7,14 @@ document.addEventListener("DOMContentLoaded", () => {
   loadTransactions()
   setupEventListeners()
 
-  // Define a data atual no campo de data
-  document.getElementById("date").valueAsDate = new Date()
+
+  // Define a data atual no campo de data 
+  const today = new Date()
+  const year = today.getFullYear()
+  const month = String(today.getMonth() + 1).padStart(2, '0')
+  const day = String(today.getDate()).padStart(2, '0')
+  document.getElementById("date").value = `${year}-${month}-${day}`
+
 })
 
 // Configurar event listeners
@@ -242,7 +248,7 @@ function renderCalendar() {
 function openReport() {
   document.getElementById("reportModal").classList.add("active")
   updateReport()
-  
+
 }
 
 // Fechar relatório
@@ -283,44 +289,44 @@ function updateReport() {
         `
   }
   // Agrupa transações por ano-mês e calcula saldo de cada mês
-const monthlyBalanceMap = {}
+  const monthlyBalanceMap = {}
 
-transactions.forEach((t) => {
-  const d = new Date(t.date)
-  const year = d.getFullYear()
-  const month = d.getMonth() // 0-11
-  const key = `${year}-${String(month + 1).padStart(2, "0")}`
+  transactions.forEach((t) => {
+    const d = new Date(t.date)
+    const year = d.getFullYear()
+    const month = d.getMonth() // 0-11
+    const key = `${year}-${String(month + 1).padStart(2, "0")}`
 
-  if (!monthlyBalanceMap[key]) {
-    monthlyBalanceMap[key] = 0
-  }
+    if (!monthlyBalanceMap[key]) {
+      monthlyBalanceMap[key] = 0
+    }
 
-  monthlyBalanceMap[key] += t.type === "entrada" ? t.amount : -t.amount
-})
-
-let meses = ['Jan','Fev','Mar','Abr','Maio','Jun','Jul','Ago','Set','Out','Nov','Dez']
-
-// usar ano/mês atual como início
-const hoje = new Date()
-let startYear = hoje.getFullYear()
-let startMonth = hoje.getMonth() // 0-11
-
-let cumulative = 0
-const projectionData = []
-
-for (let i = 0; i < 12; i++) {
-  const monthIndex = (startMonth + i) % 12
-  const year = startYear + Math.floor((startMonth + i) / 12)
-
-  const key = `${year}-${String(monthIndex + 1).padStart(2, "0")}`
-  const monthly = monthlyBalanceMap[key] || 0
-  cumulative += monthly
-
-  projectionData.push({
-    mes: `${meses[monthIndex]}/${String(year).slice(-2)}`,
-    saldo: cumulative,
+    monthlyBalanceMap[key] += t.type === "entrada" ? t.amount : -t.amount
   })
-}
+
+  let meses = ['Jan', 'Fev', 'Mar', 'Abr', 'Maio', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']
+
+  // usar ano/mês atual como início
+  const hoje = new Date()
+  let startYear = hoje.getFullYear()
+  let startMonth = hoje.getMonth() // 0-11
+
+  let cumulative = 0
+  const projectionData = []
+
+  for (let i = 0; i < 12; i++) {
+    const monthIndex = (startMonth + i) % 12
+    const year = startYear + Math.floor((startMonth + i) / 12)
+
+    const key = `${year}-${String(monthIndex + 1).padStart(2, "0")}`
+    const monthly = monthlyBalanceMap[key] || 0
+    cumulative += monthly
+
+    projectionData.push({
+      mes: `${meses[monthIndex]}/${String(year).slice(-2)}`,
+      saldo: cumulative,
+    })
+  }
 
   const ctx = document.getElementById("projectionChart")
 
@@ -391,3 +397,122 @@ function filterTransactions(type) {
   const filteredTransactions = transactions.filter((t) => t.type === type)
   updateTable(filteredTransactions)
 }
+
+// ============ DATE PICKER CUSTOM ============
+
+let currentDatePickerMonth = new Date().getMonth()
+let currentDatePickerYear = new Date().getFullYear()
+let selectedDate = new Date()
+
+function toggleDatePicker(event) {
+  event.stopPropagation()
+  const calendar = document.getElementById("datePickerCalendar")
+  calendar.classList.toggle("active")
+
+  if (calendar.classList.contains("active")) {
+    renderDatePicker()
+  }
+}
+
+function renderDatePicker() {
+  const monthNames = [
+    "Janeiro",
+    "Fevereiro",
+    "Março",
+    "Abril",
+    "Maio",
+    "Junho",
+    "Julho",
+    "Agosto",
+    "Setembro",
+    "Outubro",
+    "Novembro",
+    "Dezembro",
+  ]
+
+  const firstDay = new Date(currentDatePickerYear, currentDatePickerMonth, 1).getDay()
+  const daysInMonth = new Date(currentDatePickerYear, currentDatePickerMonth + 1, 0).getDate()
+
+  document.getElementById("datePickerMonth").textContent = `${monthNames[currentDatePickerMonth]} ${currentDatePickerYear}`
+
+  const daysContainer = document.getElementById("datePickerDays")
+  daysContainer.innerHTML = ""
+
+  // Dias vazios do mês anterior
+  for (let i = 0; i < firstDay; i++) {
+    const emptyDay = document.createElement("div")
+    emptyDay.className = "date-picker-day disabled"
+    daysContainer.appendChild(emptyDay)
+  }
+
+  // Dias do mês
+  const today = new Date()
+  for (let day = 1; day <= daysInMonth; day++) {
+    const dayEl = document.createElement("div")
+    dayEl.className = "date-picker-day"
+    dayEl.textContent = day
+
+    const date = new Date(currentDatePickerYear, currentDatePickerMonth, day)
+    const isToday =
+      date.getDate() === today.getDate() &&
+      date.getMonth() === today.getMonth() &&
+      date.getFullYear() === today.getFullYear()
+
+    const isSelected =
+      date.getDate() === selectedDate.getDate() &&
+      date.getMonth() === selectedDate.getMonth() &&
+      date.getFullYear() === selectedDate.getFullYear()
+
+    if (isToday) dayEl.classList.add("today")
+    if (isSelected) dayEl.classList.add("selected")
+
+    dayEl.onclick = () => selectDate(date)
+    daysContainer.appendChild(dayEl)
+  }
+}
+
+function previousMonth() {
+  currentDatePickerMonth--
+  if (currentDatePickerMonth < 0) {
+    currentDatePickerMonth = 11
+    currentDatePickerYear--
+  }
+  renderDatePicker()
+}
+
+function nextMonth() {
+  currentDatePickerMonth++
+  if (currentDatePickerMonth > 11) {
+    currentDatePickerMonth = 0
+    currentDatePickerYear++
+  }
+  renderDatePicker()
+}
+
+function selectDate(date) {
+  selectedDate = date
+  const dateString = date.toLocaleDateString("pt-BR")
+  document.getElementById("datePickerText").textContent = dateString
+  document.getElementById("date").value = date.toISOString().split("T")[0]
+
+  document.getElementById("datePickerCalendar").classList.remove("active")
+  renderDatePicker()
+}
+
+// Fechar o date picker ao clicar fora
+document.addEventListener("click", (e) => {
+  const calendar = document.getElementById("datePickerCalendar")
+  const input = document.getElementById("datePickerInput")
+
+  if (!input.contains(e.target) && !calendar.contains(e.target)) {
+    calendar.classList.remove("active")
+  }
+})
+
+// Inicializar com data atual
+document.addEventListener("DOMContentLoaded", () => {
+  const today = new Date()
+  selectedDate = today
+  document.getElementById("datePickerText").textContent = today.toLocaleDateString("pt-BR")
+  document.getElementById("date").value = today.toISOString().split("T")[0]
+})
