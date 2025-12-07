@@ -199,8 +199,9 @@ function renderCalendar() {
   const today = new Date()
   const year = today.getFullYear()
   const month = today.getMonth()
-
   const transactionsByDate = {}
+
+  // Agrupar transações por data
   transactions.forEach((t) => {
     const date = new Date(t.date).toDateString()
     if (!transactionsByDate[date]) transactionsByDate[date] = []
@@ -210,7 +211,6 @@ function renderCalendar() {
   let html = '<div style="text-align: center; margin-bottom: 1rem;">'
   html += `<h3>${today.toLocaleDateString("pt-BR", { month: "long", year: "numeric" })}</h3>`
   html += "</div>"
-
   html += '<div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.5rem;">'
 
   const days = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"]
@@ -225,24 +225,147 @@ function renderCalendar() {
     html += "<div></div>"
   }
 
+  // Loop dos dias do mês
   for (let day = 1; day <= daysInMonth; day++) {
     const date = new Date(year, month, day)
     const dateStr = date.toDateString()
     const hasTransactions = transactionsByDate[dateStr]
 
-    html += `<div style="
-            padding: 0.5rem;
-            text-align: center;
-            border-radius: 0.5rem;
-            background: ${hasTransactions ? "#16a34a" : "transparent"};
-            color: ${hasTransactions ? "white" : "#fafafa"};
-            font-weight: ${hasTransactions ? "600" : "normal"};
-        ">${day}</div>`
+    // Calcular totais do dia
+    let totalEntrada = 0
+    let totalSaida = 0
+
+    if (hasTransactions) {
+      totalEntrada = hasTransactions
+        .filter(t => t.type === "entrada")
+        .reduce((sum, t) => sum + t.amount, 0)
+
+      totalSaida = hasTransactions
+        .filter(t => t.type === "saida")
+        .reduce((sum, t) => sum + t.amount, 0)
+    }
+
+    const saldoDia = totalEntrada - totalSaida
+
+    // Determinar cor baseado no saldo
+    let backgroundColor = "transparent"
+    let borderColor = "transparent"
+    let textColor = "#fafafa"
+    let fontWeight = "normal"
+    let cursor = "default"
+
+    if (hasTransactions) {
+      cursor = "pointer"
+      fontWeight = "600"
+
+      if (saldoDia > 0) {
+        // Saldo positivo = verde
+        backgroundColor = "#16a34a"
+        borderColor = "#22c55e"
+        textColor = "white"
+      } else if (saldoDia < 0) {
+        // Saldo negativo = vermelho
+        backgroundColor = "#dc2626"
+        borderColor = "#ef4444"
+        textColor = "white"
+      } else {
+        // Saldo zero = amarelo/neutro
+        backgroundColor = "#d97706"
+        borderColor = "#f59e0b"
+        textColor = "white"
+      }
+    }
+
+    // Criar célula clicável do calendário
+    html += `<div 
+      onclick="showDayTransactions('${dateStr}', '${day}/${String(month + 1).padStart(2, '0')}/${year}')"
+      style="
+        padding: 0.75rem;
+        text-align: center;
+        border-radius: 0.5rem;
+        background: ${backgroundColor};
+        color: ${textColor};
+        font-weight: ${fontWeight};
+        cursor: ${cursor};
+        border: 1px solid ${borderColor};
+        transition: all 0.2s ease;
+        min-height: 70px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      "
+      onmouseover="this.style.transform = '${hasTransactions ? "scale(1.05)" : ""}';"
+      onmouseout="this.style.transform = 'scale(1)';"
+    >
+      <span style="font-size: 1.1rem;">${day}</span>
+      ${hasTransactions ? `<span style="font-size: 0.75rem; margin-top: 0.25rem;">${saldoDia >= 0 ? "+" : ""}R$ ${Math.abs(saldoDia).toFixed(2).replace('.', ',')}</span>` : ""}
+    </div>`
   }
 
   html += "</div>"
+
+  // Adicionar div para mostrar detalhes do dia selecionado
+  html += `<div id="dayDetailsContainer" style="margin-top: 1.5rem; padding: 1rem; background: #1c1c1c; border-radius: 0.5rem; display: none;">
+    <h4 style="margin-top: 0;">Transações do dia:</h4>
+    <div id="dayTransactionsContent"></div>
+  </div>`
+
   container.innerHTML = html
 }
+
+// Função para mostrar transações do dia selecionado
+function showDayTransactions(dateStr, displayDate) {
+  const container = document.getElementById("calendarContainer")
+  const detailsContainer = document.getElementById("dayDetailsContainer")
+  const contentDiv = document.getElementById("dayTransactionsContent")
+
+  const dayTransactions = transactions.filter(t => new Date(t.date).toDateString() === dateStr)
+
+  if (dayTransactions.length === 0) {
+    contentDiv.innerHTML = '<p style="color: #a3a3a3;">Nenhuma transação neste dia</p>'
+    detailsContainer.style.display = "block"
+    return
+  }
+
+  // Calcular totais
+  const totalEntrada = dayTransactions
+    .filter(t => t.type === "entrada")
+    .reduce((sum, t) => sum + t.amount, 0)
+
+  const totalSaida = dayTransactions
+    .filter(t => t.type === "saida")
+    .reduce((sum, t) => sum + t.amount, 0)
+
+  const saldoDia = totalEntrada - totalSaida
+
+  let html = `<div style="margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid #2d2d2d;">
+    <p style="margin: 0.5rem 0;"><strong>Data:</strong> ${displayDate}</p>
+    <p style="margin: 0.5rem 0; color: #16a34a;"><strong>Entradas:</strong> +R$ ${totalEntrada.toFixed(2).replace('.', ',')}</p>
+    <p style="margin: 0.5rem 0; color: #ef4444;"><strong>Saídas:</strong> -R$ ${totalSaida.toFixed(2).replace('.', ',')}</p>
+    <p style="margin: 0.5rem 0; color: #a855f7;"><strong>Saldo:</strong> R$ ${saldoDia.toFixed(2).replace('.', ',')}</p>
+  </div>`
+
+  html += '<div style="max-height: 300px; overflow-y: auto;">'
+  dayTransactions.forEach(t => {
+    html += `
+      <div style="padding: 0.75rem; margin-bottom: 0.5rem; background: #2d2d2d; border-radius: 0.25rem;">
+        <p style="margin: 0.25rem 0;"><strong>${t.description}</strong></p>
+        <p style="margin: 0.25rem 0; font-size: 0.9rem; color: #a3a3a3;">${new Date(t.date).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</p>
+        <p style="margin: 0.25rem 0; color: ${t.type === "entrada" ? "#16a34a" : "#ef4444"}; font-weight: 600;">
+          ${t.type === "entrada" ? "+" : "-"} R$ ${t.amount.toFixed(2).replace('.', ',')}
+        </p>
+      </div>
+    `
+  })
+  html += '</div>'
+
+  contentDiv.innerHTML = html
+  detailsContainer.style.display = "block"
+}
+
+
+
+
 
 // Abrir relatório
 function openReport() {

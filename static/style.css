@@ -34,7 +34,7 @@ body {
 .header {
   background: linear-gradient(180deg, #111827 0%, #0b1120 100%);
   border-bottom: 1px solid var(--border);
-  padding: 1.5rem 0;
+  padding: 0.65rem;
   margin-bottom: 1rem;
   position: sticky;
   top: 0;
@@ -44,10 +44,11 @@ body {
 
 .header-content {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
   align-items: center;
-  flex-wrap: wrap;
-  gap: 1.0rem;
+  padding: 1px;
+
+
 }
 
 h1 {
@@ -61,6 +62,7 @@ h1 {
   display: inline-block;
   border-radius: 1rem;
   padding: 0.5rem;
+  margin-left: -100px;
 }
 
 
@@ -68,13 +70,14 @@ h1 {
 .subtitle {
   color: var(--text-secondary);
   font-size: 0.9rem;
-  margin: 0.25rem 0 0 0;
+  margin-left: -93px;
 }
 
 .header-actions {
   display: flex;
   gap: 0.75rem;
   align-items: center;
+  margin-left: 474px;
 }
 
 .btn-outline {
