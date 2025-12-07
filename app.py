@@ -1,4 +1,7 @@
-from flask import Flask, render_template, request, jsonify, redirect, url_for, session
+from flask import Flask, render_template, request, jsonify, redirect, url_for, session, flash
+from flask_mail import Mail, Message
+import secrets
+import re
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 
@@ -12,6 +15,16 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///finance.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
+# Configuração de Email
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = 'lucas8ecef20@gmail.com'  # ← Mude para seu email
+app.config['MAIL_PASSWORD'] = 'gwft raiz udpo mdzs'  # ← Veja abaixo como gerar
+app.config['MAIL_DEFAULT_SENDER'] = 'seu_email@gmail.com'
+
+mail = Mail(app)
+
 
 # ----------------- MODELOS -----------------
 
@@ -19,6 +32,9 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(128), nullable=False)
+    verified = db.Column(db.Boolean, default=False)  # ← Novo
+    verification_token = db.Column(db.String(255), unique=True, nullable=True)  # ← Novo
+
 
 
 class Transaction(db.Model):
@@ -55,40 +71,137 @@ def logout():
     return redirect(url_for('login_page'))
 
 # ----------------- AUTENTICAÇÃO -----------------
+def send_verification_email(email, token):
+    """Envia email de confirmação"""
+    try:
+        verification_link = url_for('verify_email', token=token, _external=True)
+        
+        msg = Message(
+            subject='Confirme seu email - Controle de Gastos',
+            recipients=[email],
+            html=f"""
+            <html>
+                <body style="font-family: Arial, sans-serif; background-color: #f5f5f5; padding: 20px;">
+                    <div style="background-color: white; padding: 30px; border-radius: 8px; max-width: 500px; margin: 0 auto;">
+                        <h2 style="color: #22c55e;">Bem-vindo ao Controle de Gastos!</h2>
+                        <p>Obrigado por se cadastrar. Para ativar sua conta, clique no botão abaixo:</p>
+                        <a href="{verification_link}" style="display: inline-block; background-color: #22c55e; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; margin: 20px 0;">
+                            Confirmar Email
+                        </a>
+                        <p>Ou copie e cole este link no seu navegador:</p>
+                        <p style="word-break: break-all; background-color: #f0f0f0; padding: 10px; border-radius: 5px;">
+                            {verification_link}
+                        </p>
+                        <p style="color: #666; font-size: 12px; margin-top: 30px;">
+                            Este link expira em 24 horas.
+                        </p>
+                    </div>
+                </body>
+            </html>
+            """
+        )
+        mail.send(msg)
+        return True
+    except Exception as e:
+        print(f"Erro ao enviar email: {e}")
+        return False
 
 @app.route('/register', methods=['POST'])
 def register():
-    """Cadastro de novo usuário a partir do formulário de cadastro"""
-    email = request.form.get('Cadastrando_Email')
-    password = request.form.get('Cadastrando_Senha')
+    email = request.form.get('Cadastrando_Email', '').strip()
+    password = request.form.get('Cadastrando_Senha', '')
+    confirm_password = request.form.get('Confirmando_Senha', '')
+    
+    errors = []
+    
+    # Validar campos obrigatórios
+    if not email or not password or not confirm_password:
+        errors.append('Todos os campos são obrigatórios')
+    
+    # Validar senhas
+    if password != confirm_password:
+        errors.append('As senhas não coincidem')
+    
+    if len(password) < 6:
+        errors.append('A senha deve ter pelo menos 6 caracteres')
+    
+    # Validar formato do email
+    email_pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+    if not re.match(email_pattern, email):
+        errors.append('Email inválido')
+    
+    # Verificar se email já existe
+    if User.query.filter_by(email=email).first():
+        errors.append('Este email já está cadastrado')
+    
+    # Se há erros, retornar
+    if errors:
+        for error in errors:
+            flash(error, 'error')
+        return redirect(url_for('login_page'))
+    
+    try:
+        # Gerar token único
+        verification_token = secrets.token_urlsafe(32)
+        
+        # Criar usuário não verificado
+        user = User(
+            email=email,
+            password=password,
+            verified=False,
+            verification_token=verification_token
+        )
+        db.session.add(user)
+        db.session.commit()
+        
+        # Enviar email de confirmação
+        send_verification_email(email, verification_token)
+        
+        flash('Cadastro realizado! Verifique seu email para confirmar.', 'success')
+        return redirect(url_for('login_page'))
+    
+    except Exception as e:
+        flash(f'Erro ao cadastrar: {str(e)}', 'error')
+        return redirect(url_for('login_page'))
 
-    if not email or not password:
-        return "E-mail e senha são obrigatórios", 400
-
-    # opcional: verificar se já existe
-    existing = User.query.filter_by(email=email).first()
-    if existing:
-        return "E-mail já cadastrado", 400
-
-    user = User(email=email, password=password)
-    db.session.add(user)
+@app.route('/verify/<token>')
+def verify_email(token):
+    """Verifica o email do usuário"""
+    user = User.query.filter_by(verification_token=token).first()
+    
+    if not user:
+        flash('Link de verificação inválido ou expirado', 'error')
+        return redirect(url_for('login_page'))
+    
+    # Marcar como verificado
+    user.verified = True
+    user.verification_token = None  # Limpar token após uso
     db.session.commit()
+    
+    flash('Email verificado com sucesso! Você já pode fazer login.', 'success')
     return redirect(url_for('login_page'))
 
 @app.route('/login', methods=['POST'])
 def login():
-    """Login do usuário a partir do formulário de login"""
+    """Login do usuário"""
     email = request.form.get('Email_Valido')
     password = request.form.get('Senha_Valida')
-
+    
     user = User.query.filter_by(email=email, password=password).first()
+    
     if not user:
-        # simples: volta para tela de login (pode adicionar mensagem depois)
+        flash('Email ou senha incorretos', 'error')
         return redirect(url_for('login_page'))
-
+    
+    # Verificar se o email foi confirmado
+    if not user.verified:
+        flash('Verifique seu email antes de fazer login', 'warning')
+        return redirect(url_for('login_page'))
+    
     session['user_id'] = user.id
     session['user_email'] = user.email
     return redirect(url_for('home'))
+
 
 # ----------------- ROTAS API TRANSACOES -----------------
 
